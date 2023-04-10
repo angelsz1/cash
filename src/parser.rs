@@ -1,29 +1,33 @@
 pub fn parse_input(user_input: &String) -> Vec<&str> {
-    return user_input.split(' ').collect(); //todo aceptar "" como un todo
+    return my_split(user_input);
 }
 
-// fn my_split(str: &String, ch: char) -> Vec<&str> {
-//     let mut index = 0;
-//     let mut last_index = 0;
-//     let mut ret_vec: Vec<&str> = Vec::new();
-//     let str_by = &mut str.chars();
-//     let mut inside_double_quotes = false;
-//     let mut inside_single_quotes = false;
-//     while index < str_by.count() {
-//         let nth = str.as_str().chars().nth(1).unwrap();
-//         println!("{}", nth);
+fn my_split(str: &String) -> Vec<&str> {
+    let mut last_index = 0;
+    let mut ret_vec: Vec<&str> = Vec::new();
+    let mut inside_double_quotes = false;
+    let mut inside_single_quotes = false;
 
-//         if nth == '"' {
-//             inside_double_quotes = !inside_double_quotes;
-//         } else if nth == '\'' {
-//             inside_single_quotes = !inside_single_quotes;
-//         } else if nth == ch && !inside_single_quotes && !inside_double_quotes {
-//             ret_vec.push(&str.as_str()[last_index..index]);
-//             println!("{}", &str.as_str()[last_index..index]);
-//             last_index = index;
-//         }
+    for (i, c) in str.chars().enumerate() {
+        if c == '"' {
+            inside_double_quotes = !inside_double_quotes;
+        } else if c == '\'' {
+            inside_single_quotes = !inside_single_quotes;
+        } else if c == ' ' && !inside_single_quotes && !inside_double_quotes {
+            if str.chars().nth(last_index).unwrap() == '"' {
+                ret_vec.push(&str.as_str()[last_index + 1..i - 1]);
+            } else {
+                ret_vec.push(&str.as_str()[last_index..i]);
+            }
+            println!("hi");
+            last_index = i + 1;
+        }
+    }
 
-//         index = index + 1;
-//     }
-//     return ret_vec;
-// }
+    if str.chars().nth(last_index).unwrap() == '"' {
+        ret_vec.push(&str.as_str()[last_index + 1..str.len() - 1]);
+    } else {
+        ret_vec.push(&str.as_str()[last_index..]);
+    }
+    return ret_vec;
+}

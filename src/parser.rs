@@ -19,7 +19,6 @@ fn my_split(str: &String) -> Vec<&str> {
             } else {
                 ret_vec.push(&str.as_str()[last_index..i]);
             }
-            println!("hi");
             last_index = i + 1;
         }
     }

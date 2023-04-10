@@ -1,3 +1,4 @@
+use console::style;
 use std::{cmp::Ordering, env, path::Path};
 
 pub struct CommandStructure<'a> {
@@ -12,7 +13,17 @@ pub fn build_command(parsed_commands: Vec<&str>) -> Result<CommandStructure, i16
             root_str = parsed_commands[1];
         }
         let root = Path::new(root_str);
-        env::set_current_dir(&root).expect("Couldn't change dir");
+        let env_res = env::set_current_dir(&root);
+        match env_res {
+            Ok(_) => {}
+            Err(_) => {
+                println!(
+                    "{}{}",
+                    style("Unknown directory: ").red(),
+                    parsed_commands[1]
+                )
+            }
+        }
         return Err(1);
     }
     return Ok(CommandStructure {

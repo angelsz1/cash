@@ -25,7 +25,7 @@ fn main() {
                     Err(_) => {
                         println!(
                             "{}{}",
-                            style("Unknown command: ").red().bold(),
+                            style("Unknown command: ").red(),
                             String::from(&c.cmd)
                         );
                     }

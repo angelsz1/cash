@@ -4,17 +4,18 @@
 
 <h2>Installation</h2>
 
-<p>To install Cash, you'll need Rust and Cargo, Rust's package manager, installed on your machine. Once you have Rust and Cargo installed, run the following command:</p>
+<p>To install Cash, you'll need Rust and Cargo, Rust's package manager, installed on your machine. Once you have Rust and Cargo installed, run the following commands:</p>
 
-<pre><code>$ cargo install cash</code></pre>
+<pre><code>
+$ git clone https://github.com/angelsz1/cash.git
+$ cargo install --path cash
+</code></pre>
 
 <p>This will download the Cash source code, compile it, and install the binary on your system. After installation, you should be able to run the <code>cash</code> command in your terminal.</p>
 
 <h2>Usage</h2>
 
 <p>To run the Cash shell, simply type <code>cash</code> in your terminal. Cash will start a new session and display a prompt, where you can enter commands.</p>
-
-<pre><code>cash $</code></pre>
 
 <p>Cash supports a variety of Unix shell commands and syntax. Here are some examples:</p>
 

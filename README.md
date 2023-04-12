@@ -6,8 +6,7 @@
 
 <p>To install Cash, you'll need Rust and Cargo, Rust's package manager, installed on your machine. Once you have Rust and Cargo installed, run the following commands:</p>
 
-<pre><code>
-$ git clone https://github.com/angelsz1/cash.git
+<pre><code>$ git clone https://github.com/angelsz1/cash.git
 $ cargo install --path cash
 </code></pre>
 

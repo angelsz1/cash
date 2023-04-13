@@ -1,6 +1,6 @@
 <h1>Cash Shell</h1>
 
-<p>Cash is a Unix shell built in Rust programming language. The goal of Cash is to provide a simple and efficient shell that can be easily extended and customized. Cash has features such as command-line history, tab completion, piping, and redirection, and it supports custom plugins written in Rust.</p>
+<p>Cash is a Unix shell built in Rust programming language. The goal of Cash is to provide a simple and efficient shell.</p>
 
 <h2>Installation</h2>
 

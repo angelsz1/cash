@@ -14,6 +14,11 @@ fn main() {
         let command = input.trim();
         let str_cmd = String::from(command);
         let parsed_input = parser::parse_input(&str_cmd);
-        command_handler::exec_command(parsed_input);
+        match parsed_input {
+            None => {}
+            Some(pi) => {
+                command_handler::exec_command(pi);
+            }
+        }
     }
 }

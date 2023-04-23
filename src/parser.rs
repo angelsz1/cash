@@ -1,8 +1,8 @@
-pub fn parse_input(user_input: &String) -> Vec<&str> {
+pub fn parse_input(user_input: &String) -> Option<Vec<&str>> {
     return my_split(user_input);
 }
 
-fn my_split(str: &String) -> Vec<&str> {
+fn my_split(str: &String) -> Option<Vec<&str>> {
     let mut last_index = 0;
     let mut ret_vec: Vec<&str> = Vec::new();
     let mut inside_double_quotes = false;
@@ -23,10 +23,17 @@ fn my_split(str: &String) -> Vec<&str> {
         }
     }
 
-    if str.chars().nth(last_index).unwrap() == '"' {
-        ret_vec.push(&str.as_str()[last_index + 1..str.len() - 1]);
-    } else {
-        ret_vec.push(&str.as_str()[last_index..]);
+    match str.chars().nth(last_index) {
+        None => {
+            return None;
+        }
+        Some(ch) => {
+            if ch == '"' {
+                ret_vec.push(&str.as_str()[last_index + 1..str.len() - 1]);
+            } else {
+                ret_vec.push(&str.as_str()[last_index..]);
+            }
+        }
     }
-    return ret_vec;
+    return Some(ret_vec);
 }

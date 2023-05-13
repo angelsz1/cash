@@ -1,23 +1,21 @@
-use std::{io::Write, thread};
-mod command_handler;
+use std::io::Write;
+#[path = "../src/HANDLER/command.rs"]
+mod command;
 mod infobar;
+#[path = "../src/HANDLER/keystroke.rs"]
+mod keystroke;
 mod os_info;
 mod parser;
-mod signal_handler;
 
 fn main() {
-    thread::spawn(|| signal_handler::handle());
     loop {
         infobar::show_infobar();
         std::io::stdout().flush().expect("flush failed!");
-        let input = std::io::stdin().lines().next().unwrap().unwrap();
-        let command = input.trim();
-        let str_cmd = String::from(command);
-        let parsed_input = parser::parse_input(&str_cmd);
-        match parsed_input {
+        let stroke_option = keystroke::handle_strokes();
+        match stroke_option {
             None => {}
             Some(pi) => {
-                command_handler::exec_command(pi);
+                command::exec_command_from_str(pi);
             }
         }
     }

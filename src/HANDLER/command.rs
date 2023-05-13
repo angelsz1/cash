@@ -9,7 +9,7 @@ use std::{
     process::Command,
 };
 
-use crate::os_info;
+use crate::{os_info, parser};
 
 #[allow(non_camel_case_types)]
 enum SpecialCommands {
@@ -119,7 +119,7 @@ fn cd(parsed_commands: Vec<&str>) {
     }
 }
 
-pub fn exec_command(parsed_commands: Vec<&str>) {
+fn exec_command(parsed_commands: Vec<&str>) {
     let command = build_command(parsed_commands);
     match command {
         Err(_) => {}
@@ -139,4 +139,9 @@ pub fn exec_command(parsed_commands: Vec<&str>) {
             }
         }
     }
+}
+
+pub fn exec_command_from_str(command: String) {
+    let parsed_command = parser::parse_input(&command);
+    self::exec_command(parsed_command.unwrap());
 }

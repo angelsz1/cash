@@ -5,11 +5,13 @@ use termion::event::Key;
 use termion::input::TermRead;
 use termion::raw::IntoRawMode;
 
+//TODO change arrow movement to function like add and delete
 pub fn handle_strokes() -> Option<String> {
     let mut stdout = stdout().into_raw_mode().unwrap();
     stdout.flush().unwrap();
     let mut buffer = String::new();
-    let mut cursor_pos = infobar::get_bar_length();
+    let bar_len = infobar::get_bar_length();
+    let mut cursor_pos = bar_len;
     let initial_cursor_pos = cursor_pos;
 
     let stdin = stdin();
@@ -35,9 +37,22 @@ pub fn handle_strokes() -> Option<String> {
                         return None;
                     }
                 }
-                print!("{}", c);
                 buffer.insert(cursor_pos - initial_cursor_pos, c);
                 cursor_pos += 1;
+                print!(
+                    "{}{}",
+                    termion::clear::CurrentLine,
+                    termion::cursor::Left((bar_len + buffer.len()).try_into().unwrap())
+                );
+                infobar::show_infobar();
+                print!(
+                    "{}{}{}",
+                    buffer,
+                    termion::cursor::Left(
+                        (bar_len + buffer.len() - cursor_pos).try_into().unwrap()
+                    ),
+                    termion::cursor::Right(1)
+                );
             }
             Key::Home => {
                 print!(
@@ -48,20 +63,35 @@ pub fn handle_strokes() -> Option<String> {
             }
             Key::Backspace => {
                 if cursor_pos > initial_cursor_pos {
-                    print!(
-                        "{} {}{}",
-                        termion::cursor::Left(1),
-                        termion::clear::AfterCursor,
-                        termion::cursor::Left(1)
-                    );
                     buffer.remove(cursor_pos - initial_cursor_pos - 1);
                     cursor_pos -= 1;
+                    print!(
+                        "{}{}",
+                        termion::clear::CurrentLine,
+                        termion::cursor::Left((bar_len + buffer.len() + 1).try_into().unwrap())
+                    );
+                    infobar::show_infobar();
+                    print!(
+                        "{}{}{}",
+                        buffer,
+                        termion::cursor::Left(
+                            (bar_len + buffer.len() - cursor_pos).try_into().unwrap()
+                        ),
+                        termion::cursor::Right(1)
+                    );
                 }
             }
             Key::Left => {
                 if cursor_pos > initial_cursor_pos {
-                    print!("{}", termion::cursor::Left(1));
+                    write!(stdout, "{}", termion::cursor::Left(1)).unwrap();
+                    stdout.flush().unwrap();
                     cursor_pos -= 1;
+                }
+            }
+            Key::Right => {
+                if cursor_pos < initial_cursor_pos + buffer.len() {
+                    print!("{}", termion::cursor::Right(1));
+                    cursor_pos += 1;
                 }
             }
             _ => {}

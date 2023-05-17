@@ -27,6 +27,32 @@ pub fn handle_strokes() -> Option<String> {
                 infobar::show_infobar();
                 print!("{}", buffer);
             }
+            Key::Ctrl('w') => {
+                if buffer.len() > 0 {
+                    let original_len = buffer.len();
+                    let buf_splitted = buffer.split_whitespace();
+                    let buf_splitted2 = buffer.split_whitespace(); //feo
+                    let take_except_last = buf_splitted.take(buf_splitted2.count() - 1);
+                    let chars: Vec<&str> = take_except_last.collect();
+                    let result: String = chars.join(" ");
+                    buffer = result;
+                    print!(
+                        "{}{}",
+                        termion::clear::CurrentLine,
+                        termion::cursor::Left((bar_len + original_len).try_into().unwrap())
+                    );
+                    infobar::show_infobar();
+                    print!(
+                        "{}{}{}",
+                        buffer,
+                        termion::cursor::Left(
+                            (bar_len + original_len - cursor_pos).try_into().unwrap()
+                        ),
+                        termion::cursor::Right(1)
+                    );
+                    cursor_pos -= original_len - buffer.len();
+                }
+            }
             Key::Char(c) => {
                 if c == '\n' {
                     drop(stdout);

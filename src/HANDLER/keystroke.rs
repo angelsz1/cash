@@ -116,7 +116,7 @@ fn refresh(bar_len: usize, buffer: &String, cursor_pos: usize, new_cursor_pos: O
     print!(
         "{}{}",
         termion::clear::CurrentLine,
-        termion::cursor::Left((bar_len + buffer.len()).try_into().unwrap())
+        termion::cursor::Left((bar_len + buffer.len() + 1).try_into().unwrap())
     );
     infobar::show_infobar();
     match new_cursor_pos {

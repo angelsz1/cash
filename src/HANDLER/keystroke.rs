@@ -1,18 +1,17 @@
 use crate::command;
+use crate::history;
 use crate::infobar;
 use std::io::{stdin, stdout, Write};
 use termion::event::Key;
 use termion::input::TermRead;
 use termion::raw::IntoRawMode;
 
-//TODO change arrow movement to function like add and delete
 pub fn handle_strokes() -> Option<String> {
     let mut stdout = stdout().into_raw_mode().unwrap();
     stdout.flush().unwrap();
     let mut buffer = String::new();
     let bar_len = infobar::get_bar_length();
     let mut cursor_pos = bar_len;
-    let initial_cursor_pos = cursor_pos;
 
     let stdin = stdin();
     for c in stdin.keys() {
@@ -58,75 +57,90 @@ pub fn handle_strokes() -> Option<String> {
                     drop(stdout);
                     println!();
                     if buffer.len() > 0 {
+                        history::push_command(String::from(&buffer));
                         return Some(buffer);
                     } else {
                         return None;
                     }
                 }
-                print!(
-                    "{}{}",
-                    termion::clear::CurrentLine,
-                    termion::cursor::Left((bar_len + buffer.len() + 1).try_into().unwrap())
-                );
-                infobar::show_infobar();
-                buffer.insert(cursor_pos - initial_cursor_pos, c);
+                buffer.insert(cursor_pos - bar_len, c);
                 cursor_pos += 1;
-                print!(
-                    "{}{}{}",
-                    buffer,
-                    termion::cursor::Left(
-                        (bar_len + buffer.len() - cursor_pos + 1)
-                            .try_into()
-                            .unwrap()
-                    ),
-                    termion::cursor::Right(1)
-                );
+                refresh(bar_len, &buffer, cursor_pos, None);
             }
             Key::Home => {
                 print!(
                     "{}",
-                    termion::cursor::Left((cursor_pos - initial_cursor_pos).try_into().unwrap())
+                    termion::cursor::Left((cursor_pos - bar_len).try_into().unwrap())
                 );
-                cursor_pos = initial_cursor_pos;
+                cursor_pos = bar_len;
             }
             Key::Backspace => {
-                if cursor_pos > initial_cursor_pos {
-                    buffer.remove(cursor_pos - initial_cursor_pos - 1);
+                if cursor_pos > bar_len {
+                    buffer.remove(cursor_pos - bar_len - 1);
                     cursor_pos -= 1;
-                    print!(
-                        "{}{}",
-                        termion::clear::CurrentLine,
-                        termion::cursor::Left((bar_len + buffer.len() + 1).try_into().unwrap())
-                    );
-                    infobar::show_infobar();
-                    print!(
-                        "{}{}{}",
-                        buffer,
-                        termion::cursor::Left(
-                            (bar_len + buffer.len() - cursor_pos).try_into().unwrap()
-                        ),
-                        termion::cursor::Right(1)
-                    );
+                    refresh(bar_len, &buffer, cursor_pos, None);
                 }
             }
             Key::Left => {
-                if cursor_pos > initial_cursor_pos {
+                if cursor_pos > bar_len {
                     print!("{}", termion::cursor::Left(1));
                     cursor_pos -= 1;
                 }
             }
             Key::Right => {
-                if cursor_pos < initial_cursor_pos + buffer.len() {
+                if cursor_pos < bar_len + buffer.len() {
                     print!("{}", termion::cursor::Right(1));
                     cursor_pos += 1;
                 }
+            }
+            Key::Up => {
+                buffer = history::up();
+                refresh(bar_len, &buffer, cursor_pos, Some(bar_len + buffer.len()));
+                cursor_pos = bar_len + buffer.len();
+            }
+            Key::Down => {
+                buffer = history::down();
+                refresh(bar_len, &buffer, cursor_pos, Some(bar_len + buffer.len()));
+                cursor_pos = bar_len + buffer.len();
             }
             _ => {}
         }
         stdout.flush().unwrap();
     }
     drop(stdout);
+    history::push_command(String::from(&buffer));
     return Some(buffer);
+}
+
+fn refresh(bar_len: usize, buffer: &String, cursor_pos: usize, new_cursor_pos: Option<usize>) {
+    print!(
+        "{}{}",
+        termion::clear::CurrentLine,
+        termion::cursor::Left((bar_len + buffer.len()).try_into().unwrap())
+    );
+    infobar::show_infobar();
+    match new_cursor_pos {
+        Some(num) => {
+            print!(
+                "{}{}{}",
+                buffer,
+                termion::cursor::Left((bar_len + buffer.len() - num + 1).try_into().unwrap()),
+                termion::cursor::Right(1)
+            );
+        }
+        None => {
+            print!(
+                "{}{}{}",
+                buffer,
+                termion::cursor::Left(
+                    (bar_len + buffer.len() - cursor_pos + 1)
+                        .try_into()
+                        .unwrap()
+                ),
+                termion::cursor::Right(1)
+            );
+        }
+    }
 }
 
 fn ctrl_c() {

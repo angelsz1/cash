@@ -37,3 +37,7 @@ fn my_split(str: &String) -> Option<Vec<&str>> {
     }
     return Some(ret_vec);
 }
+
+pub fn history_as_vec(contents: String) -> Vec<String> {
+    return contents.split('\n').map(str::to_string).collect();
+}

@@ -63,19 +63,21 @@ pub fn handle_strokes() -> Option<String> {
                         return None;
                     }
                 }
-                buffer.insert(cursor_pos - initial_cursor_pos, c);
-                cursor_pos += 1;
                 print!(
                     "{}{}",
                     termion::clear::CurrentLine,
-                    termion::cursor::Left((bar_len + buffer.len()).try_into().unwrap())
+                    termion::cursor::Left((bar_len + buffer.len() + 1).try_into().unwrap())
                 );
                 infobar::show_infobar();
+                buffer.insert(cursor_pos - initial_cursor_pos, c);
+                cursor_pos += 1;
                 print!(
                     "{}{}{}",
                     buffer,
                     termion::cursor::Left(
-                        (bar_len + buffer.len() - cursor_pos).try_into().unwrap()
+                        (bar_len + buffer.len() - cursor_pos + 1)
+                            .try_into()
+                            .unwrap()
                     ),
                     termion::cursor::Right(1)
                 );
@@ -109,8 +111,7 @@ pub fn handle_strokes() -> Option<String> {
             }
             Key::Left => {
                 if cursor_pos > initial_cursor_pos {
-                    write!(stdout, "{}", termion::cursor::Left(1)).unwrap();
-                    stdout.flush().unwrap();
+                    print!("{}", termion::cursor::Left(1));
                     cursor_pos -= 1;
                 }
             }

@@ -26,6 +26,11 @@ pub fn handle_strokes() -> Option<String> {
                 infobar::show_infobar();
                 print!("{}", buffer);
             }
+            Key::Ctrl('q') => {
+                drop(stdout);
+                command::exec_command_from_str("exit".to_string());
+                return None;
+            }
             Key::Ctrl('w') => {
                 if buffer.len() > 0 {
                     let original_len = buffer.len();

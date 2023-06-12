@@ -100,6 +100,7 @@ fn cd(parsed_commands: Vec<&str>) {
     {
         root_str = parsed_commands[1].to_string();
     } else if parsed_commands.len() != 1 && parsed_commands[1].cmp("-") == Ordering::Equal {
+        println!("{}{}", style("Going to : ").green(), get_last_dir());
         root_str = get_last_dir();
     }
     let root = Path::new(&root_str);

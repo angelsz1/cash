@@ -99,13 +99,25 @@ pub fn handle_strokes() -> Option<String> {
                 }
             }
             Key::Up => {
+                print!(
+                    "{}{}",
+                    termion::clear::CurrentLine,
+                    termion::cursor::Left((bar_len + buffer.len() + 1).try_into().unwrap())
+                );
+                infobar::show_infobar();
                 buffer = history::up();
-                refresh(bar_len, &buffer, cursor_pos, Some(bar_len + buffer.len()));
+                print!("{}", buffer,);
                 cursor_pos = bar_len + buffer.len();
             }
             Key::Down => {
+                print!(
+                    "{}{}",
+                    termion::clear::CurrentLine,
+                    termion::cursor::Left((bar_len + buffer.len() + 1).try_into().unwrap())
+                );
+                infobar::show_infobar();
                 buffer = history::down();
-                refresh(bar_len, &buffer, cursor_pos, Some(bar_len + buffer.len()));
+                print!("{}", buffer,);
                 cursor_pos = bar_len + buffer.len();
             }
             _ => {}

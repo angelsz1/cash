@@ -125,6 +125,7 @@ fn exec_command(parsed_commands: Vec<&str>) {
     match command {
         Err(_) => {}
         Ok(c) => {
+            check_pipe_or_fifo(&c);
             let cmd = Command::new(&c.cmd).args(c.args).spawn();
             match cmd {
                 Err(_) => {
@@ -140,6 +141,11 @@ fn exec_command(parsed_commands: Vec<&str>) {
             }
         }
     }
+}
+
+//we could start by checking if pipe
+fn check_pipe_or_fifo(command: &CommandStructure) {
+    comman
 }
 
 pub fn exec_command_from_str(command: String) {

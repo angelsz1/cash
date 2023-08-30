@@ -2,7 +2,7 @@ use console::style;
 use signal_hook::low_level::exit;
 use std::{
     cmp::Ordering,
-    env,
+    env::{self, args},
     fs::File,
     io::{Read, Write},
     path::Path,
@@ -15,6 +15,7 @@ use crate::{os_info, parser};
 enum SpecialCommands {
     cd,
     exit,
+    ls,
     None,
 }
 
@@ -26,15 +27,25 @@ pub struct CommandStructure<'a> {
 fn to_special_command(command: &str) -> SpecialCommands {
     if command.cmp("cd") == Ordering::Equal {
         return SpecialCommands::cd;
-    }
-    if command.cmp("exit") == Ordering::Equal {
+    } else if command.cmp("exit") == Ordering::Equal {
         return SpecialCommands::exit;
+    } else if command.cmp("ls") == Ordering::Equal {
+        return SpecialCommands::ls;
     }
     return SpecialCommands::None;
 }
 
 fn build_command(parsed_commands: Vec<&str>) -> Result<CommandStructure, i16> {
     match to_special_command(parsed_commands[0]) {
+        SpecialCommands::ls => {
+            let mut color = vec!["--color=auto"];
+            let mut args_as_vec = parsed_commands[1..].to_vec();
+            args_as_vec.append(&mut color);
+            return Ok(CommandStructure {
+                cmd: String::from("ls"),
+                args: args_as_vec,
+            });
+        }
         SpecialCommands::cd => {
             cd(parsed_commands);
             return Err(1);

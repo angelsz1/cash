@@ -1,4 +1,5 @@
 use std::io::Write;
+mod alias;
 #[path = "../src/HANDLER/command.rs"]
 mod command;
 #[path = "../src/HANDLER/history.rs"]

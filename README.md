@@ -25,3 +25,10 @@ cash $ cat filename.txt | grep "search term" <---- pipes not yet supported
 </code></pre>
 
 <p>That's it! You're ready to start using the Cash shell.</p>
+
+<h2>You can also set custom aliases!</h2>
+<p>To do so, just go to <code>/home/[your_user]/.cashrc.toml</code> and add one in the "Aliases" Table </p>
+<p>For example:</p>
+<pre><code>[aliases]
+gs = "git status"
+</code></pre>

@@ -2,14 +2,14 @@ use console::style;
 use signal_hook::low_level::exit;
 use std::{
     cmp::Ordering,
-    env::{self, args},
+    env,
     fs::File,
     io::{Read, Write},
     path::Path,
     process::Command,
 };
 
-use crate::{os_info, parser};
+use crate::{alias, os_info, parser};
 
 #[allow(non_camel_case_types)]
 enum SpecialCommands {
@@ -136,14 +136,19 @@ fn exec_command(parsed_commands: Vec<&str>) {
     match command {
         Err(_) => {}
         Ok(c) => {
-            let cmd = Command::new(&c.cmd).args(c.args).spawn();
+            let cmd = Command::new(&c.cmd).args(&c.args).spawn();
             match cmd {
                 Err(_) => {
-                    println!(
-                        "{}{}",
-                        style("Unknown command: ").red(),
-                        String::from(&c.cmd)
-                    );
+                    if alias::check_if_alias(&c.cmd) {
+                        let real_command = alias::get_real_command(&c);
+                        exec_command_from_str(real_command);
+                    } else {
+                        println!(
+                            "{}{}",
+                            style("Unknown command: ").red(),
+                            String::from(&c.cmd)
+                        );
+                    }
                 }
                 Ok(mut child) => {
                     child.wait().expect("AY MIGUEL");

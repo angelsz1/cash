@@ -30,3 +30,9 @@ pub fn current_history_path() -> String {
     hs.push_str("/.cshistory");
     return hs;
 }
+
+pub fn current_alias_path() -> String {
+    let mut hs = current_homedir();
+    hs.push_str("/.cashrc.toml");
+    return hs;
+}

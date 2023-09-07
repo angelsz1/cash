@@ -1,7 +1,7 @@
 use crate::os_info;
 use console::style;
 
-const EXTRA_CHARACTERS : i32 = 7;
+const EXTRA_CHARACTERS: usize = 7;
 
 pub fn show_infobar() {
     let cwd = os_info::current_working_dir();

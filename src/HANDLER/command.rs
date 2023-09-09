@@ -136,22 +136,22 @@ fn exec_command(parsed_commands: Vec<&str>) {
     match command {
         Err(_) => {}
         Ok(c) => {
-            let cmd = Command::new(&c.cmd).args(&c.args).spawn();
-            match cmd {
-                Err(_) => {
-                    if alias::check_if_alias(&c.cmd) {
-                        let real_command = alias::get_real_command(&c);
-                        exec_command_from_str(real_command);
-                    } else {
+            if alias::check_if_alias(&c.cmd) {
+                let real_command = alias::get_real_command(&c);
+                exec_command_from_str(real_command);
+            } else {
+                let cmd = Command::new(&c.cmd).args(&c.args).spawn();
+                match cmd {
+                    Err(_) => {
                         println!(
                             "{}{}",
                             style("Unknown command: ").red(),
                             String::from(&c.cmd)
                         );
                     }
-                }
-                Ok(mut child) => {
-                    child.wait().expect("AY MIGUEL");
+                    Ok(mut child) => {
+                        child.wait().expect("AY MIGUEL");
+                    }
                 }
             }
         }
